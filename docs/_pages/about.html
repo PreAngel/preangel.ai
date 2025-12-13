@@ -1,0 +1,30 @@
+---
+title: About
+layout: page-sidebar
+permalink: "/about.html"
+image: https://raw.githubusercontent.com/ShipFail/.github/refs/heads/main/profile/fixit-felix-ship-fail.webp
+comments: true
+---
+
+{% assign preangel = site.authors | where: 'slug', 'preangel' | first %}
+
+{% assign partners = '' | split: ',' %}
+{% for person in site.peoples %}
+  {% if preangel.people contains person.slug %}
+     {% assign partners = partners | push: person %}
+  {% endif %}
+{% endfor %}
+
+<div class="container">
+<div class="row gap-y listrecent listauthor">
+  {% assign item_type = 'peoples' %}
+  {% for item in partners %}
+    {% include main-loop-card-item.html %}
+  {% endfor %}
+
+</div>
+</div>
+
+We built PreAngel around one simple belief: 👉 AI Native Solo Founder Systems.
+
+Made with <i class="fa fa-heart text-danger"></i> by <a href="/authors/pandora/">@Pandora</a>
