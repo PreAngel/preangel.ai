@@ -10,6 +10,8 @@ image: assets/2025/12-42-degrees-at-dawn-architecting-a-life-with-ai/cover.webp
 <!-- markdownlint-disable MD036 MD025 MD029 MD047 -->
 
 > A biography of Huan Li—architecting a life he can understand, maintain, and love with the same care he brings to his best systems. Authored by ChatGPT.
+>
+> *[Download the PDF edition](https://cdn.preangel.ai/42-degrees-at-dawn-architecting-a-life-with-ai-huan-li.pdf) to read this biography as a beautifully formatted book.*
 
 ---
 
@@ -2070,3 +2072,11 @@ It is, in its own small way, a story about **how humans and AIs began to write e
 > *Volume II, if it ever exists, will not be this outline exactly. But these are the questions it will have to answer if it wants to be honest: What survived? What changed? What did the architecture enable—and what did it cost?*
 
 ![End of Volume I]({{ 'assets/2025/12-42-degrees-at-dawn-architecting-a-life-with-ai/end-of-volume-1.webp' | relative_url }})
+
+---
+
+### Download the Book
+
+You can download the beautifully formatted PDF version of this biography here:
+
+[**Download PDF: 42 Degrees at Dawn**](https://cdn.preangel.ai/42-degrees-at-dawn-architecting-a-life-with-ai-huan-li.pdf)
