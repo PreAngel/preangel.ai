@@ -2075,8 +2075,8 @@ It is, in its own small way, a story about **how humans and AIs began to write e
 
 ---
 
-### Download the Book
+### 📖 The PDF edition
 
-You can download the beautifully formatted PDF version of this biography here:
+To read this biography as a beautifully formatted book, download it from here:
 
-[**Download PDF: 42 Degrees at Dawn**](https://cdn.preangel.ai/assets/media/42-degrees-at-dawn-architecting-a-life-with-ai-huan-li.pdf)
+- 👉 [**42 Degrees at Dawn: Architecting a Life with AI**](https://cdn.preangel.ai/assets/media/42-degrees-at-dawn-architecting-a-life-with-ai-huan-li.pdf)
