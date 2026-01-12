@@ -1,7 +1,7 @@
 ---
 name: Qiushi Powers
 site: https://github.com/AgentQ25
-avatar: assets/authors/qiushi-powers/avatar.webp
+avatar: assets/founders/qiushi-powers/avatar.webp
 bio: Founder of LeyLine, building AI-native video production tools for creators.
 email: qiushi@leylinepro.ai
 linkedin: https://linkedin.com/in/qiushi-z-37764511

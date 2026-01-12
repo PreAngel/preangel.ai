@@ -34,7 +34,7 @@ defaults:
       layout: post
       comments: true
       author: Felix
-      avatar: /assets/authors/felix/avatar.webp
+      avatar: /assets/founders/felix/avatar.webp
 
   # all pages
   - scope:
@@ -42,7 +42,7 @@ defaults:
     values:
       layout: page
   - scope:
-      path: _authors
+      path: _founders
     values:
       layout: author
       comments: true
@@ -66,6 +66,6 @@ exclude:
   - node_modules
 
 collections:
-  authors:
+  founders:
     output: true
     permalink: /:collection/:path/

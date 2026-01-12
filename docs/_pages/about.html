@@ -6,7 +6,7 @@ image: https://raw.githubusercontent.com/ShipFail/.github/refs/heads/main/profil
 comments: true
 ---
 
-{% assign preangel = site.authors | where: 'slug', 'preangel' | first %}
+{% assign preangel = site.founders | where: 'slug', 'preangel' | first %}
 
 {% assign partners = '' | split: ',' %}
 {% for person in site.peoples %}
@@ -27,4 +27,4 @@ comments: true
 
 We built PreAngel around one simple belief: 👉 AI Native Solo Founder Systems.
 
-Made with <i class="fa fa-heart text-danger"></i> by <a href="/authors/pandora/">@Pandora</a>
+Made with <i class="fa fa-heart text-danger"></i> by <a href="/founders/pandora/">@Pandora</a>

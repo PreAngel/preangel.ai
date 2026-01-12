@@ -10,7 +10,7 @@ layout: default
     <div class="col-md-12">
       <!-- Startup Start -->
       {% assign people_startups = '' | split: ',' %}
-      {% for portfolio in site.authors %}
+      {% for portfolio in site.founders %}
         {% if portfolio.people contains page.slug %}
           {% assign people_startups = people_startups | push: portfolio %}
         {% endif %}
@@ -32,7 +32,7 @@ layout: default
 
       <!-- Portfolio Start -->
       {% assign people_portfolios = '' | split: ',' %}
-      {% for portfolio in site.authors %}
+      {% for portfolio in site.founders %}
         {% if portfolio.ventures contains page.slug %}
           {% assign people_portfolios = people_portfolios | push: portfolio %}
         {% endif %}

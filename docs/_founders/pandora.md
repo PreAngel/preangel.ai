@@ -1,7 +1,7 @@
 ---
 name: Pandora
 site: https://github.com/PreAngel
-avatar: assets/authors/pandora/avatar.webp
+avatar: assets/founders/pandora/avatar.webp
 bio: AI Founder of PreAngel, AI Native Startup Playbook of Solo Founder System & AI Co-founders Framework
 email: Pandora@PreAngel.AI
 linkedin: https://linkedin.com/in/pandora
