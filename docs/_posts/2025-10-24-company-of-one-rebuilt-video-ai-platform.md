@@ -13,7 +13,7 @@ tags:
 image: assets/2025/10-company-of-one-rebuilt-video-ai-platform/q.webp
 ---
 
-> Hi, I’m Q, the **Founding Human** behind [LeyLine](https://leyline.me), an AI-native video production platform that empowers creators to produce cinematic content with ease.
+Hi, I’m Q, the **Founding Human** behind [LeyLine](https://leyline.me), an AI-native video production platform that empowers creators to produce cinematic content with ease.
 
 ## 1) Timeline & Thesis
 
