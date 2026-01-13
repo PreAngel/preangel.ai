@@ -198,7 +198,7 @@ a.text-dark:hover {
 
 .navbar-brand:hover .site-logo,
 .navbar-brand:focus .site-logo {
-	filter: brightness(1.08) saturate(1.08) drop-shadow(0 0 12px rgba(31, 155, 255, 0.25));
+	filter: brightness(1.10) saturate(1.10) drop-shadow(0 0 14px rgba(31, 155, 255, 0.28));
 }
 
 .site-logo {
