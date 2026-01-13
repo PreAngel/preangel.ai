@@ -191,6 +191,21 @@ a.text-dark:hover {
 	transition:top 0.2s ease-in-out;
 	font-weight:400;
 }
+
+.navbar-brand .site-logo {
+	transition: filter 0.15s ease;
+}
+
+.navbar-brand:hover .site-logo,
+.navbar-brand:focus .site-logo {
+	filter: brightness(1.08) saturate(1.08) drop-shadow(0 0 12px rgba(31, 155, 255, 0.25));
+}
+
+.site-logo {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+}
 .navbar .highlight .nav-link {
 	color:#03a87c !important;
 	border:1px solid #03a87c;

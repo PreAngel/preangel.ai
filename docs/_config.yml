@@ -1,12 +1,13 @@
 # Site
 name: PreAngel
 description: AI Native Startup Playbook for the One-Person Company of the AI Age
-logo: assets/images/logo.png
+logo: assets/images/preangel-logo.svg
 favicon: assets/images/preangel-icon.svg
 url: https://PreAngel.AI
 baseurl:
 email: Hello@PreAngel.AI
 mailchimp-list: https://zixia.us4.list-manage.com/subscribe/post?u=a8584b55dea5aa8bbc14bd1a0&amp;id=d9899f0d70
+
 
 math:
   enable_by_default: false
