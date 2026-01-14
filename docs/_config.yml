@@ -2,7 +2,7 @@
 name: PreAngel
 description: AI Native Startup Playbook for the One-Person Company of the AI Age
 logo: assets/images/preangel-logo-orange.svg
-favicon: assets/images/preangel-icon.svg
+favicon: assets/images/favicon.ico
 url: https://PreAngel.AI
 baseurl:
 email: Hello@PreAngel.AI
