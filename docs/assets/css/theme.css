@@ -192,19 +192,38 @@ a.text-dark:hover {
 	font-weight:400;
 }
 
-.navbar-brand .site-logo {
+.site-brand-word {
+	font-family: 'Major Mono Display', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-weight: 400;
+	letter-spacing: 0.10em;
+	line-height: 1;
+	font-size: clamp(18px, 2.0vw, 22px);
+}
+
+.site-brand-word--small {
+	font-size: 18px;
+}
+
+:root {
+	--brand-logo-color: #D54A07;
+}
+
+.site-logo-wrap {
+	color: var(--brand-logo-color);
+	display: inline-flex;
+	line-height: 0;
 	transition: filter 0.15s ease;
 }
 
-.navbar-brand:hover .site-logo,
-.navbar-brand:focus .site-logo {
+.navbar-brand:hover .site-logo-wrap,
+.navbar-brand:focus .site-logo-wrap {
 	filter: brightness(1.10) saturate(1.10) drop-shadow(0 0 14px rgba(31, 155, 255, 0.28));
 }
 
 .site-logo {
 	width: 28px;
 	height: 28px;
-	object-fit: contain;
+	display: block;
 }
 .navbar .highlight .nav-link {
 	color:#03a87c !important;
