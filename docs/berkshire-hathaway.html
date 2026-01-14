@@ -13,9 +13,69 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&display=swap" rel="stylesheet" />
 
+  <script>
+    (function () {
+      const storageKey = 'preangel-theme';
+
+      function getStoredTheme() {
+        try {
+          const value = localStorage.getItem(storageKey);
+          if (value === 'light' || value === 'dark') return value;
+          if (value != null) localStorage.removeItem(storageKey);
+          return null;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function setStoredTheme(value) {
+        try {
+          if (value) localStorage.setItem(storageKey, value);
+          else localStorage.removeItem(storageKey);
+        } catch (_) {
+          // ignore
+        }
+      }
+
+      function getSystemTheme() {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      }
+
+      function applyTheme(resolved) {
+        document.documentElement.classList.toggle('dark', resolved === 'dark');
+        document.documentElement.dataset.theme = resolved;
+        document.documentElement.style.colorScheme = resolved;
+      }
+
+      const initial = getStoredTheme() || getSystemTheme();
+      applyTheme(initial);
+
+      if (window.matchMedia) {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        mq.addEventListener?.('change', () => {
+          if (!getStoredTheme()) applyTheme(getSystemTheme());
+        });
+      }
+
+      window.__preangelTheme = {
+        get: () => getStoredTheme(),
+        getResolved: () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light'),
+        set: (value) => {
+          const normalized = value === 'light' || value === 'dark' ? value : null;
+          if (!normalized) return;
+          setStoredTheme(normalized);
+          applyTheme(normalized);
+        },
+      };
+    })();
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -26,14 +86,14 @@
     }
   </script>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
+<body class="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
   <style>
     :root { --brand-logo-color: #D54A07; }
   </style>
   <!-- Page wrapper -->
   <div class="min-h-screen flex flex-col">
     <!-- Nav / Brand -->
-    <header class="border-b border-slate-800/70 bg-slate-950/70 backdrop-blur sticky top-0 z-30">
+    <header class="border-b border-slate-200 dark:border-slate-800/70 bg-white/80 dark:bg-slate-950/70 backdrop-blur sticky top-0 z-30">
       <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
         <a href="/" class="flex items-center gap-3 group">
           <span class="inline-flex" style="color: var(--brand-logo-color)">
@@ -49,54 +109,80 @@
             </svg>
           </span>
           <div class="leading-tight">
-            <div class="font-brand text-[22px] font-normal tracking-[0.10em] group-hover:text-slate-50 transition-colors">PreAngel</div>
-            <div class="text-xs text-slate-400 group-hover:text-slate-300 transition-colors">Solo Founder Systems · AI Co‑Founder</div>
+            <div class="font-brand text-[22px] font-normal tracking-[0.10em] text-slate-900 dark:text-slate-100 group-hover:text-slate-900 dark:group-hover:text-slate-50 transition-colors">PreAngel</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">Solo Founder Systems · AI Co‑Founder</div>
           </div>
         </a>
-        <nav class="hidden sm:flex gap-6 text-xs text-slate-400 uppercase tracking-[0.15em]">
-          <a href="#manifesto" class="hover:text-emerald-300">Manifesto</a>
-          <a href="#engine" class="hover:text-emerald-300">Engine</a>
-          <a href="#compare" class="hover:text-emerald-300">Berkshire × AI</a>
-          <a href="#principles" class="hover:text-emerald-300">Principles</a>
-        </nav>
+        <div class="flex items-center gap-4">
+          <nav class="hidden sm:flex gap-6 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-[0.15em]">
+            <a href="#manifesto" class="hover:text-emerald-600 dark:hover:text-emerald-300">Manifesto</a>
+            <a href="#engine" class="hover:text-emerald-600 dark:hover:text-emerald-300">Engine</a>
+            <a href="#compare" class="hover:text-emerald-600 dark:hover:text-emerald-300">Berkshire × AI</a>
+            <a href="#principles" class="hover:text-emerald-600 dark:hover:text-emerald-300">Principles</a>
+          </nav>
+
+          <button
+            id="theme-toggle"
+            type="button"
+            class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition"
+            aria-label="Theme"
+            title="Theme"
+          >
+            <span class="sr-only">Toggle theme</span>
+            <svg id="theme-icon-light" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="M4.93 4.93 6.34 6.34"></path>
+              <path d="M17.66 17.66 19.07 19.07"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="M4.93 19.07 6.34 17.66"></path>
+              <path d="M17.66 6.34 19.07 4.93"></path>
+            </svg>
+            <svg id="theme-icon-dark" class="hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
 
     <!-- Hero -->
     <main class="flex-1">
       <!-- Hero: v3 split-screen video (right) -->
-      <section class="border-b border-slate-800/70 bg-slate-950" id="manifesto">
+      <section class="border-b border-slate-200 dark:border-slate-800/70 bg-white dark:bg-slate-950" id="manifesto">
         <div class="mx-auto max-w-6xl px-4 py-16 lg:py-20 grid gap-10 lg:grid-cols-2 items-center">
           <!-- Left: solid background text -->
           <div class="relative z-10">
-            <p class="text-xs font-semibold tracking-[0.22em] text-emerald-300/80 mb-4 uppercase">PreAngel Manifesto</p>
+            <p class="text-xs font-semibold tracking-[0.22em] text-emerald-700/80 dark:text-emerald-300/80 mb-4 uppercase">PreAngel Manifesto</p>
             <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight mb-4">
-              A <span class="text-emerald-300">Berkshire‑style</span> holding company<br class="hidden sm:block" />
-              for the <span class="text-cyan-300">AI‑native</span> era.
+              A <span class="text-emerald-700 dark:text-emerald-300">Berkshire‑style</span> holding company<br class="hidden sm:block" />
+              for the <span class="text-cyan-700 dark:text-cyan-300">AI‑native</span> era.
             </h1>
-            <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
               PreAngel LLC is a permanent capital company built by a solo founder with AI co‑founders.
               No exits. No distributions. No &ldquo;fund lifecycle.&rdquo; All gains are reinvested inside a single
               compounding engine that behaves like <span class="font-semibold">a modern Berkshire Hathaway for startups and agents</span>.
             </p>
-            <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
               Where Warren Buffett used insurance float and industrial cash flows, PreAngel uses
-              <span class="font-medium text-slate-200">QSBS, AI automation, and solo‑founder velocity</span> to build an infinite runway of
+              <span class="font-medium text-slate-900 dark:text-slate-200">QSBS, AI automation, and solo‑founder velocity</span> to build an infinite runway of
               AI‑native companies.
             </p>
             <div class="flex flex-wrap items-center gap-4 mt-4">
               <a href="#engine" class="inline-flex items-center justify-center rounded-full bg-emerald-400 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/30 hover:bg-emerald-300 transition">
                 Explore the Investment Engine
               </a>
-              <div class="text-xs text-slate-400 max-w-xs">
-                PreAngel LLC is taxed as a C‑Corp, reinvests all gains, and has <span class="font-semibold text-slate-200">no plan to distribute
+              <div class="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
+                PreAngel LLC is taxed as a C‑Corp, reinvests all gains, and has <span class="font-semibold text-slate-900 dark:text-slate-200">no plan to distribute
                 cash to its owner</span>. All value lives and compounds inside the company.
               </div>
             </div>
           </div>
 
           <!-- Right: video panel -->
-          <div class="relative h-64 sm:h-80 lg:h-[26rem] rounded-2xl overflow-hidden border border-slate-800 bg-slate-900/80 shadow-[0_0_80px_rgba(16,185,129,0.35)] cursor-pointer" id="hero-video-panel">
+          <div class="relative h-64 sm:h-80 lg:h-[26rem] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 shadow-[0_0_80px_rgba(16,185,129,0.25)] dark:shadow-[0_0_80px_rgba(16,185,129,0.35)] cursor-pointer" id="hero-video-panel">
             <video
               id="hero-video"
               class="absolute inset-0 w-full h-full object-cover"
@@ -107,12 +193,12 @@
               playsinline
               poster="/assets/berkshire-hero-poster.jpg"
             ></video>
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/20 to-transparent dark:from-slate-950/70 dark:via-slate-950/30"></div>
             <div class="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between text-[11px] pointer-events-none">
-              <div class="text-slate-100/95 font-semibold tracking-tight">
+              <div class="text-white/95 font-semibold tracking-tight">
                 The PreAngel Engine in Motion
               </div>
-              <span id="hero-video-audio-pill" class="inline-flex items-center gap-1 rounded-full bg-slate-950/70 px-3 py-1 text-[10px] font-semibold text-emerald-300 border border-emerald-500/40 backdrop-blur">
+              <span id="hero-video-audio-pill" class="inline-flex items-center gap-1 rounded-full bg-white/70 dark:bg-slate-950/70 px-3 py-1 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 dark:border-emerald-500/40 backdrop-blur">
                 <span id="hero-video-audio-icon" aria-hidden="true">🔇</span>
                 <span id="hero-video-audio-label">Tap to Unmute</span>
               </span>
@@ -122,11 +208,11 @@
       </section>
 
       <!-- The Engine Section -->
-      <section class="border-b border-slate-800/70 bg-slate-950" id="engine">
+      <section class="border-b border-slate-200 dark:border-slate-800/70 bg-slate-50 dark:bg-slate-950" id="engine">
         <div class="mx-auto max-w-6xl px-4 py-14 lg:py-18">
           <div class="max-w-2xl mb-8">
             <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-3">The PreAngel Investment Engine</h2>
-            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
               PreAngel is not a traditional fund. It is a <span class="font-semibold">permanent capital company</span> with a
               Berkshire‑style compounding strategy, adapted to an AI‑native, solo‑founder reality. The engine has
               four flywheels.
@@ -135,26 +221,26 @@
 
           <div class="grid gap-6 md:grid-cols-2">
             <!-- Flywheel 1 -->
-            <article class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+            <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5">
               <h3 class="text-sm font-semibold mb-1">1 · Structure: C‑Corp Compounding with QSBS</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p class="text-xs text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
                 PreAngel LLC is an LLC that has elected to be taxed as a C‑Corporation with the IRS. This unlocks a clean,
                 predictable tax regime:
               </p>
-              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
-                <li><span class="font-semibold">QSBS gains</span> on qualified startup shares can be 100% tax‑free <span class="text-slate-400">inside</span> PreAngel.</li>
+              <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside">
+                <li><span class="font-semibold">QSBS gains</span> on qualified startup shares can be 100% tax‑free <span class="text-slate-500 dark:text-slate-400">inside</span> PreAngel.</li>
                 <li>Non‑QSBS gains are taxed at a flat <span class="font-semibold">21% corporate rate</span>.</li>
                 <li>No dividends are planned, so there is effectively <span class="font-semibold">no personal tax drag</span> on compounding.</li>
               </ul>
             </article>
 
             <!-- Flywheel 2 -->
-            <article class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+            <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5">
               <h3 class="text-sm font-semibold mb-1">2 · Domain: AI‑Native, Solo‑Founder Friendly Bets</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p class="text-xs text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
                 PreAngel focuses on domains where AI and agents are not a feature but the foundation:
               </p>
-              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside">
                 <li>Developer tools: FireGen, FirePRD, DocWhisper / ScribeFleet.</li>
                 <li>Creative AI: ReMic / RemixIt.art, video and media pipelines.</li>
                 <li>Solo‑founder systems: products designed to be run by one human + many agents.</li>
@@ -162,12 +248,12 @@
             </article>
 
             <!-- Flywheel 3 -->
-            <article class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+            <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5">
               <h3 class="text-sm font-semibold mb-1">3 · Operating Model: One Human, Many Agents</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p class="text-xs text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
                 Instead of hiring large teams, PreAngel treats AI as the default labor pool:
               </p>
-              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside">
                 <li>Agents for research, coding, testing, design, marketing, documentation, and support.</li>
                 <li>Human time is reserved for vision, judgment, and high‑bandwidth founder interaction.</li>
                 <li>This creates a portfolio of &ldquo;micro‑Berkshires&rdquo; operated by AI, guided by a single architect.</li>
@@ -175,12 +261,12 @@
             </article>
 
             <!-- Flywheel 4 -->
-            <article class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+            <article class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5">
               <h3 class="text-sm font-semibold mb-1">4 · Capital Policy: Never Sell the Golden Geese</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              <p class="text-xs text-slate-600 dark:text-slate-300 mb-3 leading-relaxed">
                 Borrowing from Buffett, PreAngel prefers <span class="font-semibold">long‑term ownership</span> over quick flips:
               </p>
-              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+              <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside">
                 <li>Hold AI‑native assets as long as they keep compounding value.</li>
                 <li>Use liquidity moments (QSBS exits, partial sales) only to upgrade the portfolio.</li>
                 <li>All proceeds stay inside PreAngel and are redeployed into the next generation of AI companies.</li>
@@ -191,71 +277,71 @@
       </section>
 
       <!-- Berkshire vs PreAngel Comparison -->
-      <section class="border-b border-slate-800/70 bg-slate-950/95" id="compare">
+      <section class="border-b border-slate-200 dark:border-slate-800/70 bg-white dark:bg-slate-950/95" id="compare">
         <div class="mx-auto max-w-6xl px-4 py-14 lg:py-18">
           <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8">
             <div class="max-w-xl">
               <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-3">Berkshire Hathaway × PreAngel</h2>
-              <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
                 PreAngel is consciously modeled as a <span class="font-semibold">Berkshire Hathaway for the AI age</span>:
                 same permanent capital philosophy, different playground.
               </p>
             </div>
-            <p class="text-xs text-slate-400 max-w-sm md:text-right">
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm md:text-right">
               Berkshire uses insurance float and industrial cash flows to compound over decades.
               PreAngel uses QSBS, AI leverage, and solo‑founder velocity to do the same in software and agents.
             </p>
           </div>
 
-          <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60">
+          <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60">
             <table class="min-w-full text-xs text-left">
-              <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-[0.16em]">
+              <thead class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 uppercase tracking-[0.16em]">
                 <tr>
                   <th class="px-4 py-3"></th>
                   <th class="px-4 py-3">Berkshire Hathaway</th>
                   <th class="px-4 py-3">PreAngel LLC</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-800/80">
+              <tbody class="divide-y divide-slate-200 dark:divide-slate-800/80">
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Era</td>
-                  <td class="px-4 py-3 text-slate-300">Industrial &amp; consumer economy of the 20th century.</td>
-                  <td class="px-4 py-3 text-slate-300">AI‑native, software‑defined economy of the 21st century.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Era</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Industrial &amp; consumer economy of the 20th century.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">AI‑native, software‑defined economy of the 21st century.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Founder Role</td>
-                  <td class="px-4 py-3 text-slate-300">Buffett as investor &amp; capital allocator.</td>
-                  <td class="px-4 py-3 text-slate-300">Huan as solo founder, architect, and capital allocator with AI co‑founders.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Founder Role</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Buffett as investor &amp; capital allocator.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Huan as solo founder, architect, and capital allocator with AI co‑founders.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Labor Model</td>
-                  <td class="px-4 py-3 text-slate-300">Human‑heavy, large operating companies.</td>
-                  <td class="px-4 py-3 text-slate-300">One human, many agents. Human attention is the scarce asset.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Labor Model</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Human‑heavy, large operating companies.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">One human, many agents. Human attention is the scarce asset.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Capital Source</td>
-                  <td class="px-4 py-3 text-slate-300">Insurance float, retained earnings.</td>
-                  <td class="px-4 py-3 text-slate-300">Founder capital, product revenue, startup equity, AI leverage.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Capital Source</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Insurance float, retained earnings.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Founder capital, product revenue, startup equity, AI leverage.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Tax Edge</td>
-                  <td class="px-4 py-3 text-slate-300">Corporate compounding, minimal dividends.</td>
-                  <td class="px-4 py-3 text-slate-300">Same corporate compounding + QSBS 0% exits on qualifying startup stock.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Tax Edge</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Corporate compounding, minimal dividends.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Same corporate compounding + QSBS 0% exits on qualifying startup stock.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Time Horizon</td>
-                  <td class="px-4 py-3 text-slate-300">&ldquo;Our favorite holding period is forever.&rdquo;</td>
-                  <td class="px-4 py-3 text-slate-300">Same. But applied to AI‑native products and agent ecosystems.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Time Horizon</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">&ldquo;Our favorite holding period is forever.&rdquo;</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Same. But applied to AI‑native products and agent ecosystems.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Risk Profile</td>
-                  <td class="px-4 py-3 text-slate-300">Low volatility, massive capital, slower moves.</td>
-                  <td class="px-4 py-3 text-slate-300">Higher volatility, smaller base, faster iteration and learning.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Risk Profile</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Low volatility, massive capital, slower moves.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Higher volatility, smaller base, faster iteration and learning.</td>
                 </tr>
                 <tr>
-                  <td class="px-4 py-3 font-semibold text-slate-200">Primary Advantage</td>
-                  <td class="px-4 py-3 text-slate-300">Scale, reputation, access to mega‑deals.</td>
-                  <td class="px-4 py-3 text-slate-300">Speed, AI leverage, early access to frontier founders and protocols.</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900 dark:text-slate-200">Primary Advantage</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Scale, reputation, access to mega‑deals.</td>
+                  <td class="px-4 py-3 text-slate-600 dark:text-slate-300">Speed, AI leverage, early access to frontier founders and protocols.</td>
                 </tr>
               </tbody>
             </table>
@@ -264,55 +350,55 @@
       </section>
 
       <!-- Principles Section -->
-      <section class="bg-slate-950" id="principles">
+      <section class="bg-slate-50 dark:bg-slate-950" id="principles">
         <div class="mx-auto max-w-6xl px-4 py-14 lg:py-18">
           <div class="max-w-2xl mb-8">
             <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight mb-3">PreAngel Principles</h2>
-            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
               These are the non‑negotiable rules that guide every PreAngel decision. They combine Buffett’s discipline
               with an AI‑native, solo‑founder mindset.
             </p>
           </div>
 
-          <div class="grid gap-6 md:grid-cols-3 text-xs text-slate-200">
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+          <div class="grid gap-6 md:grid-cols-3 text-xs text-slate-700 dark:text-slate-200">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">1 · Permanent Capital</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 No LPs. No forced exits. No artificial deadlines. PreAngel is designed to exist and compound for decades,
                 not fund cycles.
               </p>
             </div>
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">2 · One Brain, Many Agents</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 The scarce resource is Huan’s judgment, not headcount. Everything else is delegated to agents and
                 automation.
               </p>
             </div>
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">3 · Tax‑Aware by Design</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 Use the structure the law provides: C‑Corp compounding, QSBS where possible, and no distributions that
                 leak compounding power.
               </p>
             </div>
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">4 · AI‑Native or Nothing</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 PreAngel backs products where AI is structural, not ornamental. If AI disappeared, the product should not
                 make sense.
               </p>
             </div>
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">5 · Write It Down</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 Like Berkshire’s annual letters, PreAngel expresses its thinking in writing: memos, blueprints, and
                 manifestos that compound insight, not just capital.
               </p>
             </div>
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 flex flex-col gap-2">
+            <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 p-5 flex flex-col gap-2">
               <h3 class="font-semibold text-sm">6 · Infinite Game</h3>
-              <p class="text-slate-300">
+              <p class="text-slate-600 dark:text-slate-300">
                 PreAngel is not optimizing for a single exit or a single company. It is optimizing for the next decision,
                 the next decade, and the next generation of founders and agents.
               </p>
@@ -322,23 +408,23 @@
       </section>
 
       <!-- Outro -->
-      <section class="border-t border-slate-800/70 bg-slate-950">
+      <section class="border-t border-slate-200 dark:border-slate-800/70 bg-white dark:bg-slate-950">
         <div class="mx-auto max-w-6xl px-4 py-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-400 mb-1">The PreAngel Thesis</p>
-            <p class="text-sm text-slate-200 max-w-xl">
+            <p class="text-xs font-semibold tracking-[0.2em] uppercase text-slate-500 dark:text-slate-400 mb-1">The PreAngel Thesis</p>
+            <p class="text-sm text-slate-700 dark:text-slate-200 max-w-xl">
               A single founder with a fleet of AI agents, armed with permanent capital and a Berkshire‑style discipline,
               can build an investment engine that outlasts hype cycles and fashions.
             </p>
           </div>
-          <div class="text-xs text-slate-500 max-w-xs">
+          <div class="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
             This page is a living manifesto. As PreAngel learns, experiments, and compounds, so will this document.
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="border-t border-slate-900 bg-slate-950/90">
+    <footer class="border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950/90">
       <div class="mx-auto max-w-6xl px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
         <div>© <span id="year-span"></span> PreAngel LLC · Permanent Capital for AI‑Native Builders</div>
         <div>Inspired by Berkshire Hathaway, reimagined for the agent era.</div>
@@ -349,6 +435,48 @@
   <script>
     // Simple current year injection
     document.getElementById('year-span').textContent = new Date().getFullYear();
+
+    // Theme toggle (light ↔ dark)
+    (function () {
+      var btn = document.getElementById('theme-toggle');
+      if (!btn || !window.__preangelTheme) return;
+
+      var icons = {
+        light: document.getElementById('theme-icon-light'),
+        dark: document.getElementById('theme-icon-dark'),
+      };
+
+      function setIcon(mode) {
+        Object.keys(icons).forEach(function (k) {
+          if (icons[k]) icons[k].classList.add('hidden');
+        });
+        var active = icons[mode] || icons.light;
+        if (active) active.classList.remove('hidden');
+      }
+
+      function label(mode) {
+        if (mode === 'light') return 'Theme: Light';
+        if (mode === 'dark') return 'Theme: Dark';
+        return 'Theme';
+      }
+
+      function update() {
+        var mode = window.__preangelTheme.getResolved();
+        setIcon(mode);
+        var text = label(mode);
+        btn.setAttribute('aria-label', text);
+        btn.setAttribute('title', text);
+      }
+
+      btn.addEventListener('click', function () {
+        var mode = window.__preangelTheme.getResolved();
+        var next = mode === 'dark' ? 'light' : 'dark';
+        window.__preangelTheme.set(next);
+        update();
+      });
+
+      update();
+    })();
 
     // Hero video click-to-mute/unmute toggle (same as v3 variant)
     (function () {
